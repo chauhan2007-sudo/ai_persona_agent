@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Autonomous Desk</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,400;0,500;1,400;1,500&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+
+  <header class="ticker">
+    <div class="ticker-left">
+      <span class="live-dot" id="liveDot"></span>
+      <span class="ticker-title">AUTONOMOUS DESK</span>
+    </div>
+    <div class="ticker-right">
+      <span class="ticker-stat" id="modeStat">mode: —</span>
+      <span class="ticker-sep">·</span>
+      <span class="ticker-stat" id="nextScanStat">no agent yet</span>
+    </div>
+  </header>
+
+  <nav class="tabbar" id="tabbar">
+    <!-- persona tabs injected here by app.js, "+" tab always last -->
+  </nav>
+
+  <main class="layout">
+
+    <!-- LEFT: init + persona -->
+    <section class="panel panel-desk">
+      <div class="panel-label">01 — DESK ASSIGNMENT</div>
+
+      <div id="initForm">
+        <label class="field">
+          <span>Persona name</span>
+          <input id="nameInput" type="text" placeholder="Ada" value="Ada" />
+        </label>
+
+        <label class="field">
+          <span>Domain / beat</span>
+          <select id="domainSelect">
+            <option value="__other__">Other — type your own…</option>
+            <optgroup label="AI Security">
+              <option value="AI Security — Prompt Injection & Jailbreaks" selected>Prompt Injection & Jailbreaks</option>
+              <option value="AI Security — Model Red-Teaming">Model Red-Teaming</option>
+              <option value="AI Security — Data Poisoning & Supply Chain">Data Poisoning & Supply Chain</option>
+              <option value="AI Security — Incident Response">AI Incident Response</option>
+            </optgroup>
+            <optgroup label="Machine Learning Engineering">
+              <option value="ML Engineering — Training Infrastructure">Training Infrastructure</option>
+              <option value="ML Engineering — MLOps & Deployment">MLOps & Deployment</option>
+              <option value="ML Engineering — Model Optimization">Model Optimization</option>
+              <option value="ML Engineering — Applied ML Systems">Applied ML Systems</option>
+            </optgroup>
+            <optgroup label="Robotics">
+              <option value="Robotics — Autonomous Navigation">Autonomous Navigation</option>
+              <option value="Robotics — Manipulation & Grasping">Manipulation & Grasping</option>
+              <option value="Robotics — Human-Robot Interaction">Human-Robot Interaction</option>
+              <option value="Robotics — Industrial Robotics">Industrial Robotics</option>
+            </optgroup>
+            <optgroup label="AI Ethics & Policy">
+              <option value="AI Ethics — Bias & Fairness">Bias & Fairness</option>
+              <option value="AI Ethics — Regulation & Policy">Regulation & Policy</option>
+              <option value="AI Ethics — Responsible Deployment">Responsible Deployment</option>
+              <option value="AI Ethics — Societal Impact">Societal Impact</option>
+            </optgroup>
+            <optgroup label="Developer Advocacy">
+              <option value="Developer Advocacy — Open Source AI Tooling">Open Source AI Tooling</option>
+              <option value="Developer Advocacy — Developer Experience">Developer Experience</option>
+              <option value="Developer Advocacy — API & SDK Design">API & SDK Design</option>
+              <option value="Developer Advocacy — Community Building">Community Building</option>
+            </optgroup>
+            <optgroup label="AI Product">
+              <option value="AI Product — Product Strategy">Product Strategy</option>
+              <option value="AI Product — AI UX Patterns">AI UX Patterns</option>
+              <option value="AI Product — Go-to-Market">Go-to-Market</option>
+            </optgroup>
+            <optgroup label="Open Source Contribution">
+              <option value="Open Source — Framework Development">Framework Development</option>
+              <option value="Open Source — Documentation & DX">Documentation & DX</option>
+              <option value="Open Source — Community Governance">Community Governance</option>
+            </optgroup>
+          </select>
+          <input id="domainCustomInput" type="text" class="field-sub hidden" placeholder="Type your own domain, e.g. Quantum ML" />
+        </label>
+
+        <label class="field">
+          <span>Tone</span>
+          <select id="toneSelect">
+            <option value="">Auto (let the persona decide)</option>
+            <option value="motivational">Motivational</option>
+            <option value="professional">Professional</option>
+            <option value="funny">Funny</option>
+            <option value="formal">Formal</option>
+            <option value="informal">Informal</option>
+            <option value="sarcastic">Sarcastic</option>
+            <option value="analytical">Analytical</option>
+            <option value="casual">Casual</option>
+          </select>
+        </label>
+
+        <label class="field">
+          <span>Language</span>
+          <select id="languageSelect">
+            <option value="__other__">Other — type your own…</option>
+            <option value="English" selected>English</option>
+            <option value="Hindi">Hindi</option>
+            <option value="Hinglish">Hinglish (Hindi-English mix)</option>
+            <option value="Spanish">Spanish</option>
+            <option value="French">French</option>
+            <option value="German">German</option>
+            <option value="Japanese">Japanese</option>
+            <option value="Arabic">Arabic</option>
+          </select>
+          <input id="languageCustomInput" type="text" class="field-sub hidden" placeholder="Type a language" />
+          <p class="field-note" id="languageNote">Only takes effect with a real AI engine — template mode is English-only.</p>
+        </label>
+
+        <label class="field">
+          <span>Writing engine (mode)</span>
+          <select id="modeSelect">
+            <option value="auto">Auto (recommended)</option>
+            <option value="anthropic">Claude (Anthropic)</option>
+            <option value="openai">OpenAI</option>
+            <option value="template">Template (offline, no AI)</option>
+          </select>
+          <p class="field-note">Falls back to template automatically if the chosen engine has no API key set in .env.</p>
+        </label>
+
+        <button id="initBtn" class="btn btn-primary">Initialize agent</button>
+        <p class="hint" id="initHint"></p>
+      </div>
+
+      <div id="personaCard" class="persona-card hidden">
+        <div class="stamp" id="stampMode">TEMPLATE MODE</div>
+        <h1 class="persona-name" id="personaName">—</h1>
+        <div class="persona-domain" id="personaDomain">—</div>
+        <p class="persona-bio" id="personaBio">—</p>
+
+        <div class="persona-block">
+          <div class="block-label">Tone &amp; style</div>
+          <p class="persona-sub" id="personaTone">—</p>
+        </div>
+
+        <div class="persona-block">
+          <div class="block-label">Editorial stances</div>
+          <ul class="wire-list" id="personaStances"></ul>
+        </div>
+
+        <div class="persona-block">
+          <div class="block-label">Publishing standards</div>
+          <ul class="wire-list" id="personaStandards"></ul>
+        </div>
+
+        <div class="agent-meta">
+          <span>agent id</span>
+          <code id="agentIdOut">—</code>
+          <span id="agentLanguageRow" class="agent-meta-row hidden">language: <code id="agentLanguageOut">—</code></span>
+          <span id="agentToneRow" class="agent-meta-row hidden">tone: <code id="agentToneOut">—</code></span>
+        </div>
+
+        <button id="resetBtn" class="btn btn-ghost btn-danger">Forget this persona</button>
+      </div>
+    </section>
+
+    <!-- RIGHT: feed -->
+    <section class="panel panel-feed">
+      <div class="panel-label">02 — DISPATCHES</div>
+      <div id="feedEmpty" class="feed-empty">
+        No dispatches yet. Initialize an agent on the left — the first
+        dispatch lands shortly after, then the desk keeps filing on its own.
+      </div>
+      <ul id="feedList" class="feed-list"></ul>
+    </section>
+
+  </main>
+
+  <script src="/app.js"></script>
+</body>
+</html>
