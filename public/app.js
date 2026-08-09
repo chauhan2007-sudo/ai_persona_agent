@@ -20,6 +20,7 @@ const els = {
   personaCard: document.getElementById("personaCard"),
   stampMode: document.getElementById("stampMode"),
   personaName: document.getElementById("personaName"),
+  personaAvatar: document.getElementById("personaAvatar"),
   personaDomain: document.getElementById("personaDomain"),
   personaBio: document.getElementById("personaBio"),
   personaTone: document.getElementById("personaTone"),
@@ -45,6 +46,28 @@ let activeAgentId = slots.length ? slots[0].agentId : null; // null = "composing
 let cycleIntervalMs = 120000;
 let lastCycleAt = null;
 let knownPostIds = new Set();
+
+function initialsFor(name) {
+  return (name || "?")
+    .trim()
+    .split(/\s+/)
+    .slice(0, 2)
+    .map((w) => w[0])
+    .join("")
+    .toUpperCase();
+}
+
+function domainIconFor(domain) {
+  const d = (domain || "").toLowerCase();
+  if (d.includes("security")) return "🛡";
+  if (d.includes("robot")) return "🤖";
+  if (d.includes("ethic")) return "⚖";
+  if (d.includes("engineering") || d.includes("ml ")) return "⚙";
+  if (d.includes("advocacy") || d.includes("developer")) return "📣";
+  if (d.includes("product")) return "📦";
+  if (d.includes("open source")) return "🌱";
+  return "✦";
+}
 
 function loadSlots() {
   try {
@@ -170,7 +193,8 @@ function renderPersona(agent) {
   els.personaCard.classList.remove("hidden");
   els.stampMode.textContent = agent.llmMode === "template" ? "TEMPLATE MODE" : `${agent.llmMode.toUpperCase()} MODE`;
   els.personaName.textContent = agent.persona.name;
-  els.personaDomain.textContent = agent.persona.domain;
+  els.personaAvatar.textContent = initialsFor(agent.persona.name);
+  els.personaDomain.textContent = `${domainIconFor(agent.persona.domain)} ${agent.persona.domain}`;
   els.personaBio.textContent = agent.persona.bio;
   els.personaTone.textContent = `${agent.persona.tone} — ${agent.persona.style}`;
   els.personaStances.innerHTML = agent.persona.stances.map((s) => `<li>${escapeHtml(s)}</li>`).join("");
